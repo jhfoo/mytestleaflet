@@ -8,6 +8,7 @@
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "deploy": "surge --project dist --domain leafletjs.surge.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "main": "index.js",

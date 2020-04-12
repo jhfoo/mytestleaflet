@@ -60,6 +60,7 @@ const INITMAP = {
     methods: {
       onUpdateMapCenter(NewCenter) {
         this.map.center = NewCenter
+        this.pins[0].latlong = NewCenter
       },
       onUpdateMapZoom(NewZoom) {
         this.map.zoom = NewZoom
