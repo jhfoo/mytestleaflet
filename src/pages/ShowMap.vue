@@ -1,10 +1,11 @@
 <template>
   <div>
-    Lat: {{ map.center.lat }}, Long: {{ map.center.lng}}<br/>
+    Map Lat: {{ map.center.lat }}, Long: {{ map.center.lng}}<br/>
+    Marker Lat: {{ pins[0].latlong.lat }}, Long: {{ pins[0].latlong.lng}}<br/>
     Zoom: {{ map.zoom}}<br/>
     <l-map :zoom="map.zoom" :center="map.center" @update:center="onUpdateMapCenter" @update:zoom="onUpdateMapZoom" id="mymap">
       <l-tile-layer :url="MapUrl" :attribution="MapAttr"/>
-      <l-marker :lat-lng="marker.latlong" v-for="(marker, index) in pins" v-bind:key="index + '' + marker.text">
+      <l-marker :lat-lng.sync="marker.latlong" v-for="(marker, index) in pins" :draggable="true" v-bind:key="index + '' + marker.text">
         <l-popup>{{ marker.text }}
         </l-popup>
       </l-marker>
@@ -60,7 +61,6 @@ const INITMAP = {
     methods: {
       onUpdateMapCenter(NewCenter) {
         this.map.center = NewCenter
-        this.pins[0].latlong = NewCenter
       },
       onUpdateMapZoom(NewZoom) {
         this.map.zoom = NewZoom
