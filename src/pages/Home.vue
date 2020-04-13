@@ -52,6 +52,16 @@ import firebase from 'firebase'
       })
       firebase.auth().onAuthStateChanged((user) => {
         console.log(user)
+        if (user) {
+          console.log('Retrieving roles')
+          firebase.firestore().collection('roles').get().then((records) => {
+            console.log('Records')
+            records.forEach((record) => {
+              console.log('Record %s', record.id)
+              console.log(record.data())
+            })
+          })
+        }
       })
       let ui = new firebaseui.auth.AuthUI(firebase.auth())
       // The start method will wait until the DOM is loaded.
