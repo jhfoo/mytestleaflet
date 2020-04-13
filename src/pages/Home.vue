@@ -50,6 +50,9 @@ import firebase from 'firebase'
         appId: "1:1077044227468:web:0297f789c5f2f7124dfaa9",
         measurementId: "G-MYSSNM8EGZ"
       })
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log(user)
+      })
       let ui = new firebaseui.auth.AuthUI(firebase.auth())
       // The start method will wait until the DOM is loaded.
       ui.start('#firebaseui-auth-container', this.uiConfig)   },
