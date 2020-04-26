@@ -1,25 +1,21 @@
 import Vue from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify';
-import VueRouter from 'vue-router'
+
+const GlobalFirebase = require('./lib/GlobalFirebase.js')
+const router = require('./plugins/router.js').router
 
 Vue.config.productionTip = false
 
-Vue.use(VueRouter)
-const router = new VueRouter({
-  routes: [
-    {
-      path: '/',
-      component: () => import (/* webpackChunkname: "pages" */ './pages/Home.vue')
-    }, {
-      path: '/showmap',
-      component: () => import (/* webpackChunkname: "pages" */ './pages/ShowMap.vue')
+let app = null
+GlobalFirebase.auth.onAuthStateChanged(() => {
+    if (!app) {
+        console.log('Rendering Vue')
+        app = new Vue({
+          vuetify,
+          router,
+          render: h => h(App)
+        }).$mount('#app')        
     }
-  ]
 })
 
-new Vue({
-  vuetify,
-  router,
-  render: h => h(App)
-}).$mount('#app')

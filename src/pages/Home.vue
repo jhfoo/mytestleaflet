@@ -1,6 +1,17 @@
 <template>
   <div>
-    <div id="firebaseui-auth-container"></div>
+      <v-container>
+        <v-row>
+          <v-col md="8">
+            <div id="firebaseui-auth-container"></div>
+          </v-col>
+          <v-col md="4">
+            <div v-if="isAuthenticated">
+              <v-btn @click="$router.replace('/showmap')">Continue to map</v-btn>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
   </div>
 </template>
 
@@ -9,7 +20,7 @@
 
 <script>
 import * as firebaseui from 'firebaseui'
-import firebase from 'firebase'
+const GlobalFirebase = require('../lib/GlobalFirebase.js')
 
   export default {
     name: 'Home',
@@ -18,16 +29,7 @@ import firebase from 'firebase'
     data: () => ({
       uiConfig: {
         signInSuccessUrl: '/#/showmap',
-        signInOptions: [
-          // Leave the lines as is for the providers you want to offer your users.
-          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-          firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-          firebase.auth.GithubAuthProvider.PROVIDER_ID,
-          firebase.auth.EmailAuthProvider.PROVIDER_ID,
-          firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-          firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
-        ],
+        signInOptions: GlobalFirebase.SignInConfig,
         // tosUrl and privacyPolicyUrl accept either url string or a callback
         // function.
         // Terms of service url/callback.
@@ -35,37 +37,38 @@ import firebase from 'firebase'
         // Privacy policy url/callback.
         privacyPolicyUrl: function() {
           window.location.assign('<your-privacy-policy-url>')
-        }
+        },
+        credentialHelper: firebaseui.auth.CredentialHelper.NONE,
       }
     }),
     mounted() {
       // Initialize the FirebaseUI Widget using Firebase.
-      firebase.initializeApp({
-        apiKey: "AIzaSyAJ_bAN4DgrkwJTwanCp_l5gFTOVJ1Ivkw",
-        authDomain: "kungfoo-d90fe.firebaseapp.com",
-        databaseURL: "https://kungfoo-d90fe.firebaseio.com",
-        projectId: "kungfoo-d90fe",
-        storageBucket: "kungfoo-d90fe.appspot.com",
-        messagingSenderId: "1077044227468",
-        appId: "1:1077044227468:web:0297f789c5f2f7124dfaa9",
-        measurementId: "G-MYSSNM8EGZ"
-      })
-      firebase.auth().onAuthStateChanged((user) => {
-        console.log(user)
-        if (user) {
-          console.log('Retrieving roles')
-          firebase.firestore().collection('roles').get().then((records) => {
-            console.log('Records')
-            records.forEach((record) => {
-              console.log('Record %s', record.id)
-              console.log(record.data())
-            })
-          })
-        }
-      })
-      let ui = new firebaseui.auth.AuthUI(firebase.auth())
+      // GlobalFirebase.auth.onAuthStateChanged((user) => {
+      //   console.log(GlobalFirebase.auth.currentUser)
+      //   console.log(user)
+      //   if (user) {
+      //     console.log('Retrieving roles')
+      //     GlobalFirebase.db.collection('roles').get().then((records) => {
+      //       console.log('Records')
+      //       records.forEach((record) => {
+      //         console.log('Record %s', record.id)
+      //         console.log(record.data())
+      //       })
+      //     })
+      //   }
+      // })
+      if (GlobalFirebase.auth.currentUser !== null) {
+        console.log(GlobalFirebase.auth.currentUser.providerData)
+      }
+      let ui = new firebaseui.auth.AuthUI(GlobalFirebase.auth)
       // The start method will wait until the DOM is loaded.
-      ui.start('#firebaseui-auth-container', this.uiConfig)   },
+      ui.start('#firebaseui-auth-container', this.uiConfig)
+    },
+    computed: {
+      isAuthenticated() {
+        return GlobalFirebase.auth.currentUser !== null
+      }
+    },
     methods: {
     }
   }
